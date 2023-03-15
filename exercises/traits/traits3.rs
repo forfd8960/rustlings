@@ -7,8 +7,9 @@
 // Consider what you can add to the Licensed trait.
 // Execute `rustlings hint traits3` or use the `hint` watch subcommand for a hint.
 
-// defaut impl method for trait
+
 pub trait Licensed {
+    // defaut impl method for trait
     fn licensing_info(&self) -> String {
         String::from("Some information")
     }
