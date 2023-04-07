@@ -23,7 +23,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -38,13 +37,46 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let mut color = Color{red: 0, green: 0, blue: 0};
+        match convert_i16_to_u8(tuple.0) {
+            Ok(v) => color.red = v,
+            Err(e) => return Err(e),
+        };
+
+        match convert_i16_to_u8(tuple.1) {
+            Ok(v) => color.green = v,
+            Err(e) => return Err(e),
+        };
+
+        match convert_i16_to_u8(tuple.2) {
+            Ok(v) => color.blue = v,
+            Err(e) => return Err(e),
+        };
+
+        return Ok(color);
     }
+}
+
+fn convert_i16_to_u8(v: i16) -> Result<u8, IntoColorError> {
+    if v > u8::MAX as i16 || v < u8::MIN as i16 {
+        return Err(IntoColorError::IntConversion);
+    }
+
+    return Ok(v as u8);
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        for v in arr.iter() {
+            match convert_i16_to_u8(*v) {
+                Err(e) => return Err(e),
+                Ok(v) => {},
+            };
+        }
+
+        return Ok(Color{red: arr[0] as u8, green: arr[1] as u8, blue: arr[2] as u8});
     }
 }
 
@@ -52,6 +84,18 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        for v in slice.iter() {
+            match convert_i16_to_u8(*v) {
+                Err(e) => return Err(e),
+                Ok(v) => {},
+            };
+        }
+
+        return Ok(Color{red: slice[0] as u8, green: slice[1] as u8, blue: slice[2] as u8});
     }
 }
 
